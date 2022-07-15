@@ -21,11 +21,9 @@ export class MailService {
             to,
             subject,
             template,
-            'h:X-Mailgun-Variables': { test: "test" },
-            ...emailVars.map(({ key, value }) => ({ [`v:${key}`]: value }))
         }
+        emailVars.forEach(({ key, value }) => (Object.assign(data, { [`v:${key}`]: value })))
         try {
-            console.log(data)
             await mg.messages().send(data, function (error, body) {
                 console.log(body)
             })
