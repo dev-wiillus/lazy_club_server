@@ -1,19 +1,46 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { IsDate } from "class-validator";
+import { CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+
+@InputType({ isAbstract: true })
+@ObjectType()
+export class CreatedAtEntity {
+    @Field(type => Date)
+    @CreateDateColumn()
+    @IsDate()
+    createdAt: Date;
+}
+
+@InputType({ isAbstract: true })
+@ObjectType()
+export class MutateTimeEntity extends CreatedAtEntity {
+    @Field(type => Date)
+    @UpdateDateColumn()
+    @IsDate()
+    updatedAt: Date;
+}
 
 @InputType({ isAbstract: true })
 @ObjectType()
 @Entity()
-export class CoreEntity {
+export class CoreEntity extends MutateTimeEntity {
     @Field(type => Number)
     @PrimaryGeneratedColumn()
     id: number;
+}
+
+@InputType({ isAbstract: true })
+@ObjectType()
+export class RangeEntity {
 
     @Field(type => Date)
     @CreateDateColumn()
-    create_time: Date;
+    @IsDate()
+    startedAt: Date;
 
     @Field(type => Date)
-    @UpdateDateColumn()
-    update_time: Date;
+    @DeleteDateColumn()
+    @IsDate()
+    endedAt: Date;
 }
+

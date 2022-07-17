@@ -1,12 +1,13 @@
-import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { IsEmail, IsEnum, IsOptional } from 'class-validator';
+import { Field,  InputType,  ObjectType, registerEnumType } from '@nestjs/graphql';
+import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { AgreementLogEntity } from './agreement_log.entity';
 import { AuthorizationPolicyEntity } from './authorization_policy.entity';
 import { SNSInfoEntity } from './sns_info.entity';
 import * as bcrypt from "bcrypt";
 import { InternalServerErrorException } from '@nestjs/common';
+import { ChannelOperatorEntity } from 'src/channel/entities/channel_operator.entity';
 
 enum UserStatus {
     DELETED = 'deleted',  // 탈퇴
@@ -16,7 +17,8 @@ enum UserStatus {
 
 registerEnumType(UserStatus, { name: 'UserStatusType' })
 
-@ObjectType()
+@InputType("UserInput")
+@ObjectType("UserOutput")
 @Entity('User')
 export class UserEntity extends CoreEntity {
     /* 
@@ -25,10 +27,12 @@ export class UserEntity extends CoreEntity {
 
     @Field(type => String)
     @Column({ length: 200 })
+    @IsString()
     name: string;
 
     @Field(type => String)
     @Column({ length: 20, nullable: true })
+    @IsString()
     phone: string;
 
     @Field(type => String)
@@ -38,10 +42,12 @@ export class UserEntity extends CoreEntity {
 
     @Field(type => String)
     @Column({ length: 100, select: false })
+    @IsString()
     password: string;
 
     @Field(type => String)
     @Column({ length: 200 })
+    @IsString()
     nickname: string;
 
     @Field(type => String, { defaultValue: UserStatus.PENDING })
@@ -57,6 +63,7 @@ export class UserEntity extends CoreEntity {
 
     @Column({ default: false })
     @Field(type => Boolean)
+    @IsBoolean()
     verified: boolean;
 
     @Field(type => AuthorizationPolicyEntity)
@@ -71,6 +78,9 @@ export class UserEntity extends CoreEntity {
     @OneToMany(type => SNSInfoEntity, sns => sns.user, { nullable: true })
     sns: SNSInfoEntity[]
 
+    @Field(type => [ChannelOperatorEntity])
+    @OneToMany(type => ChannelOperatorEntity, channelOperator => channelOperator.user, { nullable: true })
+    channelOperator: ChannelOperatorEntity[]
 
     @BeforeInsert()
     @BeforeUpdate()

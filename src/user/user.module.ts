@@ -8,6 +8,7 @@ import { SNSInfoEntity } from "./entities/sns_info.entity";
 import { UserController } from "./user.controller";
 import { UserResolver } from "./user.resolver";
 import { VerificationEntity } from "./entities/verification.entity";
+import { SubscriptionEntity } from "./entities/subscription.entity";
 
 @Module({
     imports: [
@@ -16,7 +17,8 @@ import { VerificationEntity } from "./entities/verification.entity";
             AuthorizationPolicyEntity,
             AgreementLogEntity,
             SNSInfoEntity,
-            VerificationEntity
+            VerificationEntity,
+            SubscriptionEntity,
         ]),
     ],
     controllers: [UserController],

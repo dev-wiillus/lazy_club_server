@@ -1,11 +1,13 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { IsBoolean, IsDate } from 'class-validator';
+import {  CreatedAtEntity } from 'src/common/entities/core.entity';
+import { Column,  Entity, ManyToOne,  PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
 
-@ObjectType()
+@InputType("AgreementLogInput")
+@ObjectType("AgreementLogOutput")
 @Entity('AgreementLog')
-export class AgreementLogEntity {
+export class AgreementLogEntity extends CreatedAtEntity {
     /*
         유저 약관 동의 로그
     */
@@ -13,17 +15,15 @@ export class AgreementLogEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field(ztype => Boolean, { nullable: true })
+    @Field(type => Boolean, { nullable: true })
     @Column({ nullable: true, comment: '마케팅 수신 동의' })
-    marketing_agreement: boolean;
+    @IsBoolean()
+    marketingAgreement: boolean;
 
-    @Field(ztype => Boolean, { nullable: true })
+    @Field(type => Boolean, { nullable: true })
     @Column({ nullable: true, comment: '이용 약관 동의' })
-    tos_agreement: boolean;
-
-    @Field(type => Date)
-    @CreateDateColumn()
-    create_time: Date;
+    @IsBoolean()
+    tosAgreement: boolean;
 
     @Field(type => UserEntity)
     @ManyToOne(type => UserEntity, user => user.agreements)

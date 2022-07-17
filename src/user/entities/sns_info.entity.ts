@@ -1,8 +1,10 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Field,  InputType,  ObjectType } from '@nestjs/graphql';
+import { IsDate, IsString } from 'class-validator';
+import { Column, CreateDateColumn, Entity, ManyToOne,  PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
 
-@ObjectType()
+@InputType("SNSInfoInput")
+@ObjectType("SNSInfoOutput")
 @Entity('SNSInfo')
 export class SNSInfoEntity {
     /*
@@ -14,23 +16,28 @@ export class SNSInfoEntity {
 
     @Field(type => String)
     @Column({ length: 45, comment: 'SNS ID' })
-    sns_id: String;
+    @IsString()
+    snsId: String;
 
     @Field(type => String)
     @Column({ length: 45, comment: 'SNS 종류' })
-    sns_type: String;
+    @IsString()
+    snsType: String;
 
     @Field(type => String)
     @Column({ length: 45, comment: 'SNS 이름' })
-    sns_name: String;
+    @IsString()
+    snsName: String;
 
     @Field(type => String)
     @Column({ length: 45, comment: 'SNS 프로필' })
-    sns_profile: String;
+    @IsString()
+    snsProfile: String;
 
     @Field(type => Date)
     @CreateDateColumn({ comment: 'SNS 연동 날짜' })
-    sns_connected_date: Date;
+    @IsDate()
+    snsConnectedDate: Date;
 
     @Field(type => UserEntity)
     @ManyToOne(type => UserEntity, user => user.sns)

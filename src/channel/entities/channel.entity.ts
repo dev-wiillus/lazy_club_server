@@ -1,6 +1,8 @@
-import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { IsBoolean, IsEnum, IsOptional, IsString, Length } from "class-validator"
+import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { Column, Entity, ManyToOne } from "typeorm";
+import { IsEnum, IsNumber, IsOptional, IsString, Length } from "class-validator"
+import { CoreEntity } from "src/common/entities/core.entity";
+import { ChannelOperatorEntity } from "./channel_operator.entity";
 
 
 export enum ChannelStatus {
@@ -11,23 +13,18 @@ export enum ChannelStatus {
 
 registerEnumType(ChannelStatus, { name: 'ChannelStatusType' })
 
-@ObjectType()
+@InputType("ChannelInput")
+@ObjectType("ChannelOutput")
 @Entity('Channel')
-export class ChannelEntity {
+export class ChannelEntity extends CoreEntity {
     /* 
         채널
     */
-    @Field(type => Number)
-    @PrimaryGeneratedColumn()
-    id: number;
 
-    // @Field(type => UserEntity)
-    // @ManyToOne(type => UserEntity, user => user.channel)
-    // user: UserEntity
- 
     @Field(type => Number)
     @Column({ nullable: true })
-    main_content_id: number;
+    @IsNumber()
+    mainContentId: number;
 
     @Field(type => String)
     @Column({ length: 100, comment: '채널 명', unique: true })
@@ -46,13 +43,10 @@ export class ChannelEntity {
     @IsString()
     description: string;
 
-    // @Field(type => String)
-    // @Column({ comment: '채널 이미지' })
-    // thumbnail: String;
-
-    @Field(type => Date)
-    @CreateDateColumn()
-    createTime: Date;
+    @Field(type => String)
+    @Column({ comment: '채널 이미지' })
+    @IsString()
+    thumbnail: String;
 
     @Field(type => ChannelStatus, { defaultValue: ChannelStatus.STOPPING })
     @Column({
@@ -64,4 +58,8 @@ export class ChannelEntity {
     @IsEnum(ChannelStatus)
     @IsOptional()
     status: ChannelStatus;
+
+    @Field(type => [ChannelOperatorEntity])
+    @ManyToOne(type => ChannelOperatorEntity, operator => operator.channel, { nullable: false })
+    operator: ChannelOperatorEntity[]
 }
