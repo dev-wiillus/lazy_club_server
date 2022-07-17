@@ -16,11 +16,11 @@ registerEnumType(ChannelBillingPolicyStatus, { name: 'ChannelBillingPolicyStatus
 export class ChannelBillingPolicyEntity {
 
     @PrimaryColumn()
-    channel_id: number;
+    channelId: number;
 
     @Field(type => ChannelEntity)
     @OneToOne(type => ChannelEntity, { onDelete: "CASCADE" })
-    @JoinColumn({ name: "channel_id" })
+    @JoinColumn({ name: "channelId" })
     channel: ChannelEntity;
 
     @Field(type => ChannelBillingPolicyStatus, { defaultValue: ChannelBillingPolicyStatus.FREE })

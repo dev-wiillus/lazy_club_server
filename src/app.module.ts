@@ -12,6 +12,7 @@ import * as Joi from 'joi';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthLocalModule } from './auth-local/auth-local.module';
 import { MailModule } from './mail/mail.module';
+import { ContentModule } from './content/content.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { MailModule } from './mail/mail.module';
       domain: process.env.MAILGUN_DOMAIN_NAME,
       fromEmail: process.env.MAILGUN_FROM_EMAIL
     }),
+    ContentModule,
     // AuthModule
   ],
   controllers: [],

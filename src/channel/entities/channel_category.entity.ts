@@ -6,25 +6,25 @@ import { ChannelTagEntity } from "./channel_tag.entity";
 @InputType("ChannelCategoryInput")
 @ObjectType("ChannelCategoryOutput")
 @Entity('ChannelCategory')
-@Unique("id", ["channel_id", "tag_id"])
+@Unique("id", ["channelId", "tagId"])
 export class ChannelCategoryEntity {
     /**
         채널 카테고리
      */
 
         @PrimaryColumn()
-        channel_id: number;
+        channelId: number;
     
         @PrimaryColumn()
-        tag_id: number;
+        tagId: number;
     
     @Field(type => ChannelEntity)
     @ManyToOne(type => ChannelEntity, channel => channel.id)
-    @JoinColumn({ name: "channel_id" })
+    @JoinColumn({ name: "channelId" })
     channel: ChannelEntity
 
     @Field(type => ChannelTagEntity)
     @ManyToOne(type => ChannelTagEntity, tag => tag.id)
-    @JoinColumn({ name: "tag_id" })
+    @JoinColumn({ name: "tagId" })
     tag: ChannelTagEntity
 }

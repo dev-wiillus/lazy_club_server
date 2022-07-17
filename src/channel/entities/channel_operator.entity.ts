@@ -17,26 +17,26 @@ registerEnumType(ChannelOperatorStatus, { name: 'ChannelOperatorStatusType' })
 @InputType("ChannelOperatorInput")
 @ObjectType("ChannelOperatorOutput")
 @Entity('ChannelOperator')
-@Unique("id", ["user_id", "channel_id"])
+@Unique("id", ["userId", "channelId"])
 export class ChannelOperatorEntity extends MutateTimeEntity {
     /*
         채널 운영진
     */
 
     @PrimaryColumn()
-    user_id: number;
+    userId: number;
 
     @PrimaryColumn()
-    channel_id: number;
+    channelId: number;
 
     @Field(type => UserEntity)
     @ManyToOne(type => UserEntity, user => user.id)
-    @JoinColumn({ name: "user_id" })
+    @JoinColumn({ name: "userId" })
     user: UserEntity
 
     @Field(type => ChannelEntity)
     @ManyToOne(type => ChannelEntity, channel => channel.id)
-    @JoinColumn({ name: "channel_id" })
+    @JoinColumn({ name: "channelId" })
     channel: ChannelEntity
 
     @Field(type => String)
