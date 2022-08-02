@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, RelationId } from "typeorm";
 import { IsEnum, IsNumber, IsOptional, IsString, Length } from "class-validator"
 import { CoreEntity } from "src/common/entities/core.entity";
 import { UserEntity } from "src/user/entities/user.entity";
@@ -50,7 +50,7 @@ export class ContentEntity extends CoreEntity {
     content: string;
 
     @Field(type => Number)
-    @Column({ comment: "조회 수" })
+    @Column({ comment: "조회 수", default: 0 })
     @IsNumber()
     hit: number;
 
@@ -65,12 +65,15 @@ export class ContentEntity extends CoreEntity {
     @IsOptional()
     status: ContentStatus;
 
-    @Field(type => UserEntity)
-    @ManyToOne(type => UserEntity, user => user.id)
-    user: UserEntity
+    @Field(type => UserEntity, { description: '최초 작성자' })
+    @ManyToOne(type => UserEntity, writer => writer.id)
+    writer: UserEntity;
+
+    @RelationId((content: ContentEntity) => content.writer)
+    writerId: number;
 
     @Field(type => ChannelEntity)
     @ManyToOne(type => ChannelEntity, channel => channel.id)
-    channel: ChannelEntity
+    channel: ChannelEntity;
 
 }

@@ -9,6 +9,8 @@ import { UserEntity } from './user.entity';
 export class AuthorizationPolicyEntity {
     /*
         유저 권한 정책
+            - 일반 유저    
+            - 관리자
     */
     @Field(type => Number)
     @PrimaryGeneratedColumn()

@@ -5,7 +5,7 @@ import { UserEntity } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, Unique } from "typeorm";
 import { ChannelEntity } from "./channel.entity";
 
-enum ChannelOperatorStatus {
+export enum ChannelOperatorStatus {
     DELETED = 'deleted',  // 삭제
     STOPPED = 'stopped',  // 정지
     RUNNING = 'running',  // 사용중
@@ -52,7 +52,7 @@ export class ChannelOperatorEntity extends MutateTimeEntity {
     @Field(type => String)
     @Column({ length: 10, comment: '사업자 등록 번호', nullable: true })
     @IsString()
-    businessRegistration_number: string;
+    businessRegistrationNumber: string;
 
     @Field(type => String, { defaultValue: ChannelOperatorStatus.PENDING })
     @Column({

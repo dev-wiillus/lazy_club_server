@@ -10,6 +10,7 @@ export class RegisterInput extends PickType(UserEntity, [
     'nickname',
     'phone',
     'status',
+    'role',
 ], InputType) { }
 
 

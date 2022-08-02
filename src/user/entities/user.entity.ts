@@ -1,4 +1,4 @@
-import { Field,  InputType,  ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
@@ -16,6 +16,13 @@ enum UserStatus {
 }
 
 registerEnumType(UserStatus, { name: 'UserStatusType' })
+
+export enum UserRole {
+    User = 'User',  // 일반 사용자
+    Creater = 'Creater',  // 채널 운영자
+}
+
+registerEnumType(UserRole, { name: 'UserRoleType' })
 
 @InputType("UserInput")
 @ObjectType("UserOutput")
@@ -60,6 +67,17 @@ export class UserEntity extends CoreEntity {
     @IsEnum(UserStatus)
     @IsOptional()
     status: UserStatus;
+
+    @Field(type => String, { defaultValue: UserRole.User })
+    @Column({
+        comment: '계정 타입',
+        type: "enum",
+        enum: UserRole,
+        default: UserRole.User
+    })
+    @IsEnum(UserRole)
+    @IsOptional()
+    role: UserRole;
 
     @Column({ default: false })
     @Field(type => Boolean)

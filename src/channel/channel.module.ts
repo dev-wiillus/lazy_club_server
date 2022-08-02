@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ChannelService } from './channel.service';
-import { ChannelController } from './channel.controller';
 import { ChannelResolver } from './channel.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChannelEntity } from './entities/channel.entity';
@@ -11,21 +10,24 @@ import { ChannelOperatorEntity } from './entities/channel_operator.entity';
 import { ChannelTagEntity } from './entities/channel_tag.entity';
 import { CommunityEntity } from './entities/community.entity';
 import { OpenAlertEntity } from './entities/open_alert.entity';
+import { ContentEntity } from 'src/content/entities/content.entity';
+import { ContentModule } from 'src/content/content.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ChannelEntity,
-       UserEntity,
-        ChannelBillingPolicyEntity,
+      UserEntity,
+      ChannelBillingPolicyEntity,
       ChannelCategoryEntity,
       ChannelOperatorEntity,
       ChannelTagEntity,
       CommunityEntity,
-      OpenAlertEntity
-      ]),
+      OpenAlertEntity,
+      ContentEntity,
+    ]),
   ],
-  controllers: [ChannelController],
+  controllers: [],
   providers: [ChannelService, ChannelResolver]
 })
 export class ChannelModule { }

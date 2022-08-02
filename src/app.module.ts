@@ -64,6 +64,7 @@ import { ContentModule } from './content/content.module';
       fromEmail: process.env.MAILGUN_FROM_EMAIL
     }),
     ContentModule,
+    AuthLocalModule,
     // AuthModule
   ],
   controllers: [],

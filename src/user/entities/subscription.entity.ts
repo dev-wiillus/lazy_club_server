@@ -3,7 +3,7 @@ import { IsEnum, IsOptional, } from "class-validator";
 import { ChannelEntity } from "src/channel/entities/channel.entity";
 import { RangeEntity } from "src/common/entities/core.entity";
 import { UserEntity } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 enum SubscriptionStatus {
     STOPPED = 'stopped',  // 정지

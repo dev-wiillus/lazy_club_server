@@ -1,8 +1,10 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { IsEnum, IsNumber, IsOptional, IsString, Length } from "class-validator"
 import { CoreEntity } from "src/common/entities/core.entity";
 import { ChannelOperatorEntity } from "./channel_operator.entity";
+import { ContentEntity } from "src/content/entities/content.entity";
+import { ChannelCategoryEntity } from "./channel_category.entity";
 
 
 export enum ChannelStatus {
@@ -21,9 +23,10 @@ export class ChannelEntity extends CoreEntity {
         채널
     */
 
-    @Field(type => Number)
+    @Field(type => Number, { nullable: true })
     @Column({ nullable: true })
     @IsNumber()
+    @IsOptional()
     mainContentId: number;
 
     @Field(type => String)
@@ -43,9 +46,10 @@ export class ChannelEntity extends CoreEntity {
     @IsString()
     description: string;
 
-    @Field(type => String)
-    @Column({ comment: '채널 이미지' })
+    @Field(type => String, { nullable: true })
+    @Column({ comment: '채널 이미지', nullable: true })
     @IsString()
+    @IsOptional()
     thumbnail: String;
 
     @Field(type => ChannelStatus, { defaultValue: ChannelStatus.STOPPING })
@@ -59,7 +63,30 @@ export class ChannelEntity extends CoreEntity {
     @IsOptional()
     status: ChannelStatus;
 
-    @Field(type => [ChannelOperatorEntity])
-    @ManyToOne(type => ChannelOperatorEntity, operator => operator.channel, { nullable: false })
-    operator: ChannelOperatorEntity[]
+    @Field(type => [ChannelOperatorEntity], { nullable: true })
+    @ManyToOne(
+        type => ChannelOperatorEntity,
+        operators => operators.channel,
+        {
+            nullable: true,
+            cascade: ['remove']
+        }
+    )
+    operators: ChannelOperatorEntity[]
+
+    @Field(type => [ContentEntity], { nullable: true })
+    @ManyToOne(
+        type => ContentEntity,
+        contents => contents.channel,
+        { nullable: true }
+    )
+    contents: ContentEntity[]
+
+    @Field(type => ChannelCategoryEntity, { nullable: true })
+    @OneToMany(
+        type => ChannelCategoryEntity,
+        category => category.channel,
+        { nullable: true }
+    )
+    category: ChannelCategoryEntity;
 }
