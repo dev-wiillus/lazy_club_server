@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
-import { IsEnum, IsNumber, IsOptional, IsString, Length } from "class-validator"
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, Length } from "class-validator"
 import { CoreEntity } from "src/common/entities/core.entity";
 import { ChannelOperatorEntity } from "./channel_operator.entity";
 import { ContentEntity } from "src/content/entities/content.entity";
@@ -64,7 +64,7 @@ export class ChannelEntity extends CoreEntity {
     status: ChannelStatus;
 
     @Field(type => [ChannelOperatorEntity], { nullable: true })
-    @ManyToOne(
+    @OneToMany(
         type => ChannelOperatorEntity,
         operators => operators.channel,
         {
@@ -75,7 +75,7 @@ export class ChannelEntity extends CoreEntity {
     operators: ChannelOperatorEntity[]
 
     @Field(type => [ContentEntity], { nullable: true })
-    @ManyToOne(
+    @OneToMany(
         type => ContentEntity,
         contents => contents.channel,
         { nullable: true }
@@ -89,4 +89,37 @@ export class ChannelEntity extends CoreEntity {
         { nullable: true }
     )
     category: ChannelCategoryEntity;
+
+    // TODO: 임시
+    @Field(type => String)
+    @Column({ length: 200, comment: '대표 운영자 닉네임(이름)' })
+    @IsString()
+    @Length(1, 200)
+    agentNickname: string;
+
+    // TODO: 임시
+    @Field(type => String, { nullable: true })
+    @Column({ comment: '대표 운영자 프로필', nullable: true })
+    @IsString()
+    @IsOptional()
+    agentProfile: String;
+
+    // TODO: 임시
+    @Field(type => String)
+    @Column({ comment: '대표 운영자 소개', type: "text" })
+    @IsString()
+    agentIntroduction: string;
+
+    // TODO: 임시
+    @Field(type => Boolean, { nullable: true })
+    @Column({ nullable: true, comment: '이용 약관 동의' })
+    @IsBoolean()
+    termsOfService: boolean;
+
+    // TODO: 임시
+    @Field(type => Boolean, { nullable: true })
+    @Column({ nullable: true, comment: '개인정보처리방침 동의' })
+    @IsBoolean()
+    agreements: boolean;
+
 }

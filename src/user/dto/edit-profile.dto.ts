@@ -8,5 +8,5 @@ export class EditProfileOutput extends CoreOutput { }
 
 @InputType()
 export class EditProfileInput extends PartialType(
-    PickType(UserEntity, ['email', 'password'], InputType)
+    PickType(UserEntity, ['email', 'password', 'name', 'phone', 'nickname'], InputType)
 ) { }

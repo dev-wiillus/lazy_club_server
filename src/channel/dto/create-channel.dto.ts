@@ -11,10 +11,15 @@ export class CreateChannelInput extends PickType(ChannelEntity, [
     'description',
     'thumbnail',
     'mainContentId',
+    'agentNickname',
+    'agentProfile',
+    'agentIntroduction',
+    'termsOfService',
+    'agreements'
 ], InputType) {
     @Field(type => Int)
     tagId?: number;
- }
+}
 
 @ObjectType()
 export class CreateChannelOutput extends CoreOutput { }

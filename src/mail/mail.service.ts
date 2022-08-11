@@ -35,13 +35,14 @@ export class MailService {
     sendVerificationEmail(email: string, code: string) {
         this.sendEmail(
             '계정 확인',
-            'robin@wiillus.com',
+            email,
             'confirm_account',
             [{
                 key: 'code', value: code
             },
             {
-                key: 'username', value: email
-            }])
+                key: 'host', value: process.env.HOST
+            }]
+        )
     }
 }
