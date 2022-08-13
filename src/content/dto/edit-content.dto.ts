@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType, PartialType, } from "@nestjs/graphql";
 import { CoreOutput } from "src/common/dto/output.dto";
-import { CreateContentInput } from "./create-content.dto";
+import { CreateContentInput, CreateContentOutput } from "./create-content.dto";
 
 @InputType()
 export class EditContentInput extends PartialType(CreateContentInput) {
@@ -9,4 +9,4 @@ export class EditContentInput extends PartialType(CreateContentInput) {
 }
 
 @ObjectType()
-export class EditContentOutput extends CoreOutput { }
+export class EditContentOutput extends CreateContentOutput { }

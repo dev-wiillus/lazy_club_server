@@ -12,14 +12,14 @@ export class ChannelCategoryEntity {
         채널 카테고리
      */
 
-        @PrimaryColumn()
-        channelId: number;
-    
-        @PrimaryColumn()
-        tagId: number;
-    
+    @PrimaryColumn()
+    channelId: number;
+
+    @PrimaryColumn()
+    tagId: number;
+
     @Field(type => ChannelEntity)
-    @ManyToOne(type => ChannelEntity, channel => channel.id)
+    @ManyToOne(type => ChannelEntity, channel => channel.id, { onDelete: 'CASCADE' })
     @JoinColumn({ name: "channelId" })
     channel: ChannelEntity
 

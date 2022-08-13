@@ -51,7 +51,7 @@ import { ContentModule } from './content/content.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: true,
       driver: ApolloDriver,
-      context: ({ req }) => ({ user: req['user'] })
+      context: ({ req }) => ({ user: req['user'] }),
     }),
     ChannelModule,
     UserModule,

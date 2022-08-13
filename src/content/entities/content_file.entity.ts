@@ -1,6 +1,7 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { IsBoolean, IsString } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ContentEntity } from "./content.entity";
 
 @InputType("ContentFileInput")
 @ObjectType("ContentFileOutput")
@@ -23,4 +24,8 @@ export class ContentFileEntity {
     @Column()
     @IsBoolean()
     isPreview: boolean
+
+    @Field(type => ContentEntity)
+    @ManyToOne(type => ContentEntity, content => content.id)
+    content: ContentEntity;
 }

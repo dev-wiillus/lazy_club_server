@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, Length } from "class-validator"
 import { CoreEntity } from "src/common/entities/core.entity";
 import { ChannelOperatorEntity } from "./channel_operator.entity";
@@ -35,10 +35,12 @@ export class ChannelEntity extends CoreEntity {
     @Length(1, 100)
     title: string;
 
-    @Field(type => String)
-    @Column({ length: 200, comment: '채널 주제' })
+    // TODO: 알파버전 이후에 nullable 제거
+    @Field(type => String, { nullable: true })
+    @Column({ length: 200, comment: '채널 주제', nullable: true })
     @IsString()
     @Length(1, 200)
+    @IsOptional()
     subject: string;
 
     @Field(type => String)
@@ -69,7 +71,6 @@ export class ChannelEntity extends CoreEntity {
         operators => operators.channel,
         {
             nullable: true,
-            cascade: ['remove']
         }
     )
     operators: ChannelOperatorEntity[]
@@ -83,12 +84,13 @@ export class ChannelEntity extends CoreEntity {
     contents: ContentEntity[]
 
     @Field(type => ChannelCategoryEntity, { nullable: true })
-    @OneToMany(
+    // @OneToMany(
+    @OneToOne(
         type => ChannelCategoryEntity,
         category => category.channel,
         { nullable: true }
     )
-    category: ChannelCategoryEntity;
+    categories: ChannelCategoryEntity;
 
     // TODO: 임시
     @Field(type => String)

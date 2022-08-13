@@ -7,10 +7,14 @@ export class CreateContentInput extends PickType(ContentEntity, [
     'title',
     'category',
     'content',
+    'status'
 ], InputType) {
     @Field(type => Number)
     channelId: number;
 }
 
 @ObjectType()
-export class CreateContentOutput extends CoreOutput { }
+export class CreateContentOutput extends CoreOutput {
+    @Field(type => ContentEntity, { nullable: true })
+    results?: ContentEntity
+}

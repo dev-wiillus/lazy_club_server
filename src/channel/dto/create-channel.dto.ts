@@ -3,14 +3,14 @@ import { IsEmail } from "class-validator";
 import { CoreOutput } from "src/common/dto/output.dto";
 import { ChannelEntity } from "../entities/channel.entity";
 import { ChannelOperatorEntity } from "../entities/channel_operator.entity";
+// import { GraphQLUpload, FileUpload } from 'graphql-upload';
 
 @InputType()
 export class CreateChannelInput extends PickType(ChannelEntity, [
     'title',
-    'subject',
     'description',
-    'thumbnail',
     'mainContentId',
+    'thumbnail',
     'agentNickname',
     'agentProfile',
     'agentIntroduction',
@@ -19,10 +19,16 @@ export class CreateChannelInput extends PickType(ChannelEntity, [
 ], InputType) {
     @Field(type => Int)
     tagId?: number;
+
+    // @Field(type => GraphQLUpload)
+    // thumbnail?: FileUpload
 }
 
 @ObjectType()
-export class CreateChannelOutput extends CoreOutput { }
+export class CreateChannelOutput extends CoreOutput {
+    @Field(type => ChannelEntity, { nullable: true })
+    result?: ChannelEntity;
+}
 
 
 @InputType()

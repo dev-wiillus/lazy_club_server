@@ -76,8 +76,10 @@ export class ContentService {
             })
             newContent.channel = channel
             await this.contentRepository.save(newContent)
+            const results = await this.contentRepository.findOne({ where: { id: newContent.id } })
             return {
-                ok: true
+                ok: true,
+                results
             }
         } catch (error) {
             return {
@@ -118,8 +120,10 @@ export class ContentService {
                     ...editContentInput,
                 }
             ])
+            const results = await this.contentRepository.findOne({ where: { id: editContentInput.contentId } })
             return {
-                ok: true
+                ok: true,
+                results
             }
         } catch (error) {
             return {

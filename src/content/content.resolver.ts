@@ -30,7 +30,7 @@ export class ContentResolver {
     }
 
     @Mutation(returns => CreateContentOutput)
-    @Role(['Creater'])
+    @Role(['Creator'])
     async createContent(
         @AuthUser() authUser: UserEntity,
         @Args('input') createContentInput: CreateContentInput
@@ -42,7 +42,7 @@ export class ContentResolver {
     }
 
     @Mutation(returns => EditContentOutput)
-    @Role(['Creater'])
+    @Role(['Creator'])
     editContent(
         @AuthUser() authUser: UserEntity,
         @Args('input') editContentInput: EditContentInput,
@@ -51,7 +51,7 @@ export class ContentResolver {
     }
 
     @Mutation(returns => DeleteContentOutput)
-    @Role(['Creater'])
+    @Role(['Creator'])
     deleteContent(
         @AuthUser() authUser: UserEntity,
         @Args('input') deleteContentInput: DeleteContentInput

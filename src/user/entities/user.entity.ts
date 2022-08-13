@@ -19,7 +19,7 @@ registerEnumType(UserStatus, { name: 'UserStatusType' })
 
 export enum UserRole {
     User = 'User',  // 일반 사용자
-    Creater = 'Creater',  // 채널 운영자
+    Creator = 'Creator',  // 채널 운영자
 }
 
 registerEnumType(UserRole, { name: 'UserRoleType' })
@@ -68,12 +68,13 @@ export class UserEntity extends CoreEntity {
     @IsOptional()
     status: UserStatus;
 
-    @Field(type => String, { defaultValue: UserRole.User })
+    // TODO: mvp 버전만 creator로 생성되도록 해놨음
+    @Field(type => String, { defaultValue: UserRole.Creator })
     @Column({
         comment: '계정 타입',
         type: "enum",
         enum: UserRole,
-        default: UserRole.User
+        default: UserRole.Creator
     })
     @IsEnum(UserRole)
     @IsOptional()

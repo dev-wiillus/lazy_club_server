@@ -37,19 +37,19 @@ export class UserResolver {
     }
 
     @Query(returns => UserEntity)
-    @Role(['User', 'Creater'])
+    @Role(['User', 'Creator'])
     me(@AuthUser() authUser: UserEntity) {
         return authUser
     }
 
     @Query(returns => UserProfileOutput)
-    @Role(['User', 'Creater'])
+    @Role(['User', 'Creator'])
     userProfile(@Args() userProfileInput: UserProfileInput): Promise<UserProfileOutput> {
         return this.userService.findOne(userProfileInput.userId)
     }
 
     @Mutation(returns => EditProfileOutput)
-    @Role(['User', 'Creater'])
+    @Role(['User', 'Creator'])
     editProfile(
         @AuthUser() authUser: UserEntity,
         @Args('input') editProfileInput: EditProfileInput

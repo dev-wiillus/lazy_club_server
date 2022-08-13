@@ -35,7 +35,7 @@ export class ChannelOperatorEntity extends MutateTimeEntity {
     user: UserEntity
 
     @Field(type => ChannelEntity)
-    @ManyToOne(type => ChannelEntity, channel => channel.id)
+    @ManyToOne(type => ChannelEntity, channel => channel.id, { onDelete: 'CASCADE' })
     @JoinColumn({ name: "channelId" })
     channel: ChannelEntity
 

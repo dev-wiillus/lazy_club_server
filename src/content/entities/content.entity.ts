@@ -1,9 +1,10 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Column, Entity, JoinColumn, ManyToOne, RelationId } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { IsEnum, IsNumber, IsOptional, IsString, Length } from "class-validator"
 import { CoreEntity } from "src/common/entities/core.entity";
 import { UserEntity } from "src/user/entities/user.entity";
 import { ChannelEntity } from "src/channel/entities/channel.entity";
+import { ContentFileEntity } from "./content_file.entity";
 
 
 export enum ContentCategory {
@@ -16,6 +17,7 @@ registerEnumType(ContentCategory, { name: 'ContentCategoryType' })
 export enum ContentStatus {
     DELETED = 'deleted',  // 삭제
     NORMAL = 'normal',  // 정상
+    DRAFT = 'draft', // 임시저장
 }
 
 registerEnumType(ContentStatus, { name: 'ContentStatusType' })
@@ -76,4 +78,7 @@ export class ContentEntity extends CoreEntity {
     @ManyToOne(type => ChannelEntity, channel => channel.id)
     channel: ChannelEntity;
 
+    @Field(type => [ContentFileEntity], { nullable: true })
+    @OneToMany(type => ContentFileEntity, contentFiles => contentFiles.id)
+    contentFiles?: ContentFileEntity[]
 }

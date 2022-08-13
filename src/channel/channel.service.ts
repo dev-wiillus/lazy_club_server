@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContentEntity } from 'src/content/entities/content.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
-import { CreateChannelInput, InviteChannelOperatorInput } from './dto/create-channel.dto';
+import { Connection, DataSource, getConnection, In, Repository } from 'typeorm';
+import { CreateChannelInput, CreateChannelOutput, InviteChannelOperatorInput } from './dto/create-channel.dto';
 import { DeleteChannelInput, DeleteChannelOutput } from './dto/delete-channel.dto';
 import { EditChannelInput, EditChannelOutput } from './dto/edit-channel.dto';
 import { FindAllChannelInput, FindAllChannelOutput } from './dto/find-all-channel.dto';
 import { FindChannelInput, FindChannelOutput } from './dto/find-channel.dto';
 import { FindChannelTagOutput, FindTagByChannelIdInput, FindTagByChannelIdOutput, MutateChannelCategoryInput, MutateChannelCategoryOutput } from './dto/tag.dto';
-import { ChannelEntity } from './entities/channel.entity';
+import { ChannelEntity, ChannelStatus } from './entities/channel.entity';
 import { ChannelCategoryEntity } from './entities/channel_category.entity';
 import { ChannelOperatorEntity, ChannelOperatorStatus } from './entities/channel_operator.entity';
 import { ChannelTagEntity } from './entities/channel_tag.entity';
@@ -26,7 +26,7 @@ export class ChannelService {
     @InjectRepository(ChannelTagEntity)
     private readonly channelTagRepository: Repository<ChannelTagEntity>,
     @InjectRepository(ChannelCategoryEntity)
-    private readonly channelCategoryRepository: Repository<ChannelCategoryEntity>
+    private readonly channelCategoryRepository: Repository<ChannelCategoryEntity>,
   ) { }
 
   async findAllChannel({ page }: FindAllChannelInput): Promise<FindAllChannelOutput> {
@@ -49,11 +49,23 @@ export class ChannelService {
     }
   }
 
-  async findChannel({ channelId }: FindChannelInput): Promise<FindChannelOutput> {
+  async findChannel({
+    // channelId,
+    operatorId
+  }: FindChannelInput): Promise<FindChannelOutput> {
     try {
-      const results = await this.channelRepository.findOneByOrFail({
-        id: channelId
+      const results = await this.channelRepository.findOne({
+        where: {
+          // id: channelId,
+          operators: In([operatorId])
+        },
+        relations: {
+          contents: {
+            content: false
+          }
+        }
       })
+      console.log(results)
       return {
         ok: true,
         results
@@ -73,29 +85,31 @@ export class ChannelService {
   // TODO: transaction
   async createChannel(
     writer: UserEntity,
-    { tagId, ...createChannelInput }: CreateChannelInput,
+    { tagId, thumbnail, ...createChannelInput }: CreateChannelInput,
     inviteChannelOperatorInput: InviteChannelOperatorInput
-  ) {
+  ): Promise<CreateChannelOutput> {
     try {
-      const newChannel = this.channelRepository.create(createChannelInput);
+      // console.log(thumbnail)
+      const createdChannel = this.channelRepository.create({ ...createChannelInput, status: ChannelStatus.RUNNING });
 
-      const channel = await this.channelRepository.save(newChannel)
+      const channel = await this.channelRepository.save(createdChannel)
       // TODO: 채널 운영진 (만든사람이 먼저 대표자가 되도록)
-      const newChannelOperator = this.channelOperatorRepository.create({
+      const createdChannelOperator = this.channelOperatorRepository.create({
         userId: writer.id,
-        channelId: newChannel.id,
+        channelId: channel.id,
         user: writer,
-        channel: newChannel,
+        channel,
         status: ChannelOperatorStatus.RUNNING
       })
+      await this.channelOperatorRepository.save(createdChannelOperator)
 
-      await this.channelOperatorRepository.save(newChannelOperator)
-      channel.operators = [newChannelOperator]
+      const operators = await this.channelOperatorRepository.findBy({ channelId: createdChannelOperator.channelId, userId: createdChannelOperator.userId })
+      channel.operators = operators
       // TODO: 채널 운영진 초대 메일 발송
 
       const categoryResult = await this.mutateChannelCategory({ channelId: channel.id, tagId })
       if (categoryResult.ok) {
-        channel.category = categoryResult.results
+        channel.categories = categoryResult.results
       } else {
         return categoryResult
       }
@@ -104,8 +118,21 @@ export class ChannelService {
       // TODO: 채널 허가를 어떻게 관리할지
       // TODO: 유저 -> 크리에이터 롤을 취득하고 채널을 만들 수 있게 할지
       await this.channelRepository.save(channel)
+      const result = await this.channelRepository.findOne({
+        where: { id: channel.id },
+        relations: {
+          operators: {
+            user: true
+          },
+          categories: {
+            tag: true
+          }
+        }
+      })
+      console.log(result)
       return {
-        ok: true
+        ok: true,
+        result
       }
     } catch (error) {
       return {
@@ -148,11 +175,11 @@ export class ChannelService {
       }
 
       // TODO: 카테고리 끼워넣기
-      await this.channelRepository.save({
-        id: channel.id,
-        ...editChannelInput,
-        ...(category && { category })
-      })
+      // await this.channelRepository.save({
+      //   id: channel.id,
+      //   ...editChannelInput,
+      //   ...(category && { category })
+      // })
       return {
         ok: true
       }
@@ -256,17 +283,23 @@ export class ChannelService {
         }
       })
 
-      let results;
       // 생성
       if (!category) {
-        results = this.channelCategoryRepository.create({ channelId, tagId })
+        const createdCategory = this.channelCategoryRepository.create({ channelId, tagId })
+        await this.channelCategoryRepository.save(createdCategory)
       }
 
       // 수정
       if (category && category.tagId !== tagId) {
-        results = await this.channelCategoryRepository.update({ channelId }, { tagId })
+        await this.channelCategoryRepository.update({ channelId }, { tagId })
       }
 
+      const results = await this.channelCategoryRepository.findOne({
+        where: {
+          channelId,
+          tagId
+        }
+      })
       return {
         ok: true,
         results

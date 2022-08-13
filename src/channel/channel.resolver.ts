@@ -39,7 +39,7 @@ export class ChannelResolver {
     }
 
     @Mutation(returns => CreateChannelOutput)
-    @Role(['Creater'])
+    @Role(['Creator'])
     async createChannel(
         @AuthUser() authUser: UserEntity,
         @Args('channelInput') createChannelInput: CreateChannelInput,
@@ -53,7 +53,7 @@ export class ChannelResolver {
     }
 
     @Mutation(returns => EditChannelOutput)
-    @Role(['Creater'])
+    @Role(['Creator'])
     async editChannel(
         @AuthUser() authUser: UserEntity,
         @Args('channelInput') editChannelInput: EditChannelInput
@@ -65,7 +65,7 @@ export class ChannelResolver {
     }
 
     @Mutation(returns => DeleteChannelOutput)
-    @Role(['Creater'])
+    @Role(['Creator'])
     async deleteChannel(
         @AuthUser() authUser: UserEntity,
         @Args('channelInput') deleteChannelInput: DeleteChannelInput
