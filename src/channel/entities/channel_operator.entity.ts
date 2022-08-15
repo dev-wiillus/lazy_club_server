@@ -54,7 +54,7 @@ export class ChannelOperatorEntity extends MutateTimeEntity {
     @IsString()
     businessRegistrationNumber: string;
 
-    @Field(type => String, { defaultValue: ChannelOperatorStatus.PENDING })
+    @Field(type => ChannelOperatorStatus, { defaultValue: ChannelOperatorStatus.PENDING })
     @Column({
         comment: '상태',
         type: "enum",

@@ -57,7 +57,7 @@ export class UserEntity extends CoreEntity {
     @IsString()
     nickname: string;
 
-    @Field(type => String, { defaultValue: UserStatus.PENDING })
+    @Field(type => UserStatus, { defaultValue: UserStatus.PENDING })
     @Column({
         comment: '계정 상태',
         type: "enum",
@@ -68,8 +68,8 @@ export class UserEntity extends CoreEntity {
     @IsOptional()
     status: UserStatus;
 
-    // TODO: mvp 버전만 creator로 생성되도록 해놨음
-    @Field(type => String, { defaultValue: UserRole.Creator })
+    // TODO: mvp 버전만 creator로 생성(허가 작업 없기 때문)
+    @Field(type => UserRole, { defaultValue: UserRole.Creator })
     @Column({
         comment: '계정 타입',
         type: "enum",

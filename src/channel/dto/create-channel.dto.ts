@@ -11,8 +11,6 @@ export class CreateChannelInput extends PickType(ChannelEntity, [
     'description',
     'mainContentId',
     'thumbnail',
-    'agentNickname',
-    'agentProfile',
     'agentIntroduction',
     'termsOfService',
     'agreements'

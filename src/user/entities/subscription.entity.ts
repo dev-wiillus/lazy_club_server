@@ -32,7 +32,7 @@ export class SubscriptionEntity extends RangeEntity {
     @ManyToOne(type => ChannelEntity, channel => channel.id)
     channel: ChannelEntity
 
-    @Field(type => String, { defaultValue: SubscriptionStatus.RUNNING })
+    @Field(type => SubscriptionStatus, { defaultValue: SubscriptionStatus.RUNNING })
     @Column({
         comment: '구독 상태',
         type: "enum",

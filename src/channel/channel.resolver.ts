@@ -9,6 +9,7 @@ import { DeleteChannelInput, DeleteChannelOutput } from "./dto/delete-channel.dt
 import { EditChannelInput, EditChannelOutput } from "./dto/edit-channel.dto";
 import { FindAllChannelInput, FindAllChannelOutput } from "./dto/find-all-channel.dto";
 import { FindChannelInput, FindChannelOutput } from "./dto/find-channel.dto";
+import { OpenAlertInput, OpenAlertOutput } from "./dto/open-alert.dto";
 import { FindChannelTagOutput, FindTagByChannelIdInput, FindTagByChannelIdOutput } from "./dto/tag.dto";
 import { ChannelEntity } from "./entities/channel.entity";
 
@@ -86,5 +87,17 @@ export class ChannelResolver {
         @Args('input') findTagByChannelIdInput: FindTagByChannelIdInput
     ): Promise<FindTagByChannelIdOutput> {
         return this.channelService.findTagByChannelId(findTagByChannelIdInput)
+    }
+
+    @Mutation(returns => OpenAlertOutput)
+    @Role(['User', 'Creator'])
+    async openAlert(
+        @AuthUser() authUser: UserEntity,
+        @Args('input') openAlertInput: OpenAlertInput
+    ): Promise<OpenAlertOutput> {
+        return this.channelService.openAlert(
+            authUser,
+            openAlertInput
+        )
     }
 }

@@ -92,19 +92,15 @@ export class ChannelEntity extends CoreEntity {
     )
     categories: ChannelCategoryEntity;
 
-    // TODO: 임시
-    @Field(type => String)
-    @Column({ length: 200, comment: '대표 운영자 닉네임(이름)' })
-    @IsString()
-    @Length(1, 200)
-    agentNickname: string;
-
-    // TODO: 임시
-    @Field(type => String, { nullable: true })
-    @Column({ comment: '대표 운영자 프로필', nullable: true })
-    @IsString()
-    @IsOptional()
-    agentProfile: String;
+    @Field(type => ChannelOperatorEntity, { nullable: true })
+    @OneToOne(
+        type => ChannelOperatorEntity,
+        leader => leader.channel,
+        {
+            nullable: true,
+        }
+    )
+    leader?: ChannelOperatorEntity
 
     // TODO: 임시
     @Field(type => String)

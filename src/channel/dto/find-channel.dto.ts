@@ -4,11 +4,11 @@ import { ChannelEntity } from "../entities/channel.entity";
 
 @InputType()
 export class FindChannelInput {
-    // @Field(type => Int, { nullable: true })
-    // channelId?: number;
+    @Field(type => Int, { nullable: true })
+    channelId?: number;
 
-    @Field(type => Int)
-    operatorId: number
+    @Field(type => Int, { nullable: true })
+    operatorId?: number
 }
 
 @ObjectType()

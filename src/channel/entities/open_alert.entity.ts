@@ -30,11 +30,6 @@ export class OpenAlertEntity extends CreatedAtEntity {
     @JoinColumn({ name: "channelId" })
     channel: ChannelEntity
 
-    @Field(type => Number)
-    @Column({ nullable: true })
-    @IsNumber()
-    mainContentId: number;
-
     @Field(type => String)
     @Column({ length: 200, comment: '이름' })
     @IsString()

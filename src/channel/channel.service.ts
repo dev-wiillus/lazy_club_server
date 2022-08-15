@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContentEntity } from 'src/content/entities/content.entity';
-import { UserEntity } from 'src/user/entities/user.entity';
+import { UserEntity, UserRole } from 'src/user/entities/user.entity';
 import { Connection, DataSource, getConnection, In, Repository } from 'typeorm';
 import { CreateChannelInput, CreateChannelOutput, InviteChannelOperatorInput } from './dto/create-channel.dto';
 import { DeleteChannelInput, DeleteChannelOutput } from './dto/delete-channel.dto';
 import { EditChannelInput, EditChannelOutput } from './dto/edit-channel.dto';
 import { FindAllChannelInput, FindAllChannelOutput } from './dto/find-all-channel.dto';
 import { FindChannelInput, FindChannelOutput } from './dto/find-channel.dto';
+import { OpenAlertInput, OpenAlertOutput } from './dto/open-alert.dto';
 import { FindChannelTagOutput, FindTagByChannelIdInput, FindTagByChannelIdOutput, MutateChannelCategoryInput, MutateChannelCategoryOutput } from './dto/tag.dto';
 import { ChannelEntity, ChannelStatus } from './entities/channel.entity';
 import { ChannelCategoryEntity } from './entities/channel_category.entity';
 import { ChannelOperatorEntity, ChannelOperatorStatus } from './entities/channel_operator.entity';
 import { ChannelTagEntity } from './entities/channel_tag.entity';
+import { OpenAlertEntity } from './entities/open_alert.entity';
 
 @Injectable()
 export class ChannelService {
@@ -27,6 +29,8 @@ export class ChannelService {
     private readonly channelTagRepository: Repository<ChannelTagEntity>,
     @InjectRepository(ChannelCategoryEntity)
     private readonly channelCategoryRepository: Repository<ChannelCategoryEntity>,
+    @InjectRepository(OpenAlertEntity)
+    private readonly openAlertRepository: Repository<OpenAlertEntity>,
   ) { }
 
   async findAllChannel({ page }: FindAllChannelInput): Promise<FindAllChannelOutput> {
@@ -50,22 +54,26 @@ export class ChannelService {
   }
 
   async findChannel({
-    // channelId,
+    channelId,
     operatorId
   }: FindChannelInput): Promise<FindChannelOutput> {
     try {
       const results = await this.channelRepository.findOne({
         where: {
-          // id: channelId,
-          operators: In([operatorId])
+          ...(channelId && { id: channelId }),
+          ...(operatorId && { operators: In([operatorId]) })
         },
         relations: {
-          contents: {
-            content: false
+          contents: true,
+          categories: {
+            tag: true
+          },
+          operators: {
+            user: true
           }
+
         }
       })
-      console.log(results)
       return {
         ok: true,
         results
@@ -89,15 +97,19 @@ export class ChannelService {
     inviteChannelOperatorInput: InviteChannelOperatorInput
   ): Promise<CreateChannelOutput> {
     try {
+      // TODO: 한 사람당 채널 하나만 만들수 있도록
       // console.log(thumbnail)
       const createdChannel = this.channelRepository.create({ ...createChannelInput, status: ChannelStatus.RUNNING });
 
       const channel = await this.channelRepository.save(createdChannel)
-      // TODO: 채널 운영진 (만든사람이 먼저 대표자가 되도록)
+
       const createdChannelOperator = this.channelOperatorRepository.create({
         userId: writer.id,
         channelId: channel.id,
-        user: writer,
+        user: {
+          ...writer,
+          role: UserRole.Creator
+        },
         channel,
         status: ChannelOperatorStatus.RUNNING
       })
@@ -105,6 +117,7 @@ export class ChannelService {
 
       const operators = await this.channelOperatorRepository.findBy({ channelId: createdChannelOperator.channelId, userId: createdChannelOperator.userId })
       channel.operators = operators
+      channel.leader = operators[0]  // 만든사람이 먼저 대표자가 되도록
       // TODO: 채널 운영진 초대 메일 발송
 
       const categoryResult = await this.mutateChannelCategory({ channelId: channel.id, tagId })
@@ -115,14 +128,15 @@ export class ChannelService {
       }
       // TODO: 채널 과금 정책 생성 cascade
 
-      // TODO: 채널 허가를 어떻게 관리할지
-      // TODO: 유저 -> 크리에이터 롤을 취득하고 채널을 만들 수 있게 할지
       await this.channelRepository.save(channel)
       const result = await this.channelRepository.findOne({
         where: { id: channel.id },
         relations: {
           operators: {
-            user: true
+            user: {
+              id: true,
+              nickname: true,
+            }
           },
           categories: {
             tag: true
@@ -305,6 +319,27 @@ export class ChannelService {
         results
       }
 
+    } catch (error) {
+      return {
+        ok: false,
+        error
+      }
+    }
+  }
+
+  async openAlert(
+    writer: UserEntity,
+    openAlertInput: OpenAlertInput
+  ): Promise<OpenAlertOutput> {
+    try {
+      const openAlert = this.openAlertRepository.create({
+        ...openAlertInput,
+        user: writer
+      })
+      await this.openAlertRepository.save(openAlert)
+      return {
+        ok: true,
+      }
     } catch (error) {
       return {
         ok: false,
