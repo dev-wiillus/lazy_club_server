@@ -6,15 +6,11 @@ import { MailService } from './mail.service';
 @Module({})
 @Global()
 export class MailModule {
-
-    static forRoot(optioins: MailModuleOptions): DynamicModule {
-        return {
-            module: MailModule,
-            exports: [MailService],
-            providers: [
-                { provide: CONFIG_OPTIONS, useValue: optioins },
-                MailService
-            ]
-        }
-    }
+	static forRoot(optioins: MailModuleOptions): DynamicModule {
+		return {
+			module: MailModule,
+			exports: [MailService],
+			providers: [{ provide: CONFIG_OPTIONS, useValue: optioins }, MailService],
+		};
+	}
 }

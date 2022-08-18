@@ -165,3 +165,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .yarnrc.yml
+
+# static files
+static/channel/**/*
+static/file/**/*
+static/user/**/*

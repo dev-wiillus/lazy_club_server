@@ -11,23 +11,24 @@ import { ChannelTagEntity } from './entities/channel_tag.entity';
 import { CommunityEntity } from './entities/community.entity';
 import { OpenAlertEntity } from './entities/open_alert.entity';
 import { ContentEntity } from 'src/content/entities/content.entity';
-import { ContentModule } from 'src/content/content.module';
+import { UploadModule } from '@root/upload/upload.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      ChannelEntity,
-      UserEntity,
-      ChannelBillingPolicyEntity,
-      ChannelCategoryEntity,
-      ChannelOperatorEntity,
-      ChannelTagEntity,
-      CommunityEntity,
-      OpenAlertEntity,
-      ContentEntity,
-    ]),
-  ],
-  controllers: [],
-  providers: [ChannelService, ChannelResolver]
+	imports: [
+		TypeOrmModule.forFeature([
+			ChannelEntity,
+			UserEntity,
+			ChannelBillingPolicyEntity,
+			ChannelCategoryEntity,
+			ChannelOperatorEntity,
+			ChannelTagEntity,
+			CommunityEntity,
+			OpenAlertEntity,
+			ContentEntity,
+		]),
+		UploadModule,
+	],
+	controllers: [],
+	providers: [ChannelService, ChannelResolver],
 })
-export class ChannelModule { }
+export class ChannelModule {}

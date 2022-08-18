@@ -9,30 +9,30 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+	constructor(private readonly userService: UserService) {}
 
-    @Get()
-    findAll() {
-        return this.userService.findAll()
-    }
+	@Get()
+	findAll() {
+		return this.userService.findAll();
+	}
 
-    @Get(':id')
-    findOne(@Param('id') id: string) { 
-        return this.userService.findOne(+id)
-    }
+	@Get(':id')
+	findOne(@Param('id') id: string) {
+		return this.userService.findOne(+id);
+	}
 
-    @Post()
-    register(@Body() user: UserEntity) {
-        return this.userService.register(user)
-    }
+	@Post()
+	register(@Body() user: UserEntity) {
+		return this.userService.register(user);
+	}
 
-    @Delete(':id')
-    deleteAccount(@Param('id') id: number) {
-        return this.userService.deleteAccount(id)
-    }
+	@Delete(':id')
+	deleteAccount(@Param('id') id: number) {
+		return this.userService.deleteAccount(id);
+	}
 
-    @Get(':id')
-    findPayment(@Param('id') id: string) {
-        return this.userService.findPayment(+id)
-    }
+	@Get(':id')
+	findPayment(@Param('id') id: string) {
+		return this.userService.findPayment(+id);
+	}
 }

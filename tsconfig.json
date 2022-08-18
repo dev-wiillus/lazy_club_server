@@ -11,6 +11,10 @@
 		"sourceMap": true,
 		"outDir": "./dist",
 		"baseUrl": "./",
+		"paths": {
+			"@root/*": ["./src/*"]
+			//   "@auth/*": ["./src/auth/*"]
+		},
 		"incremental": true,
 		"skipLibCheck": true,
 		"strictNullChecks": false,

@@ -1,12 +1,11 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { CoreOutput } from "src/common/dto/output.dto";
-
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { CoreOutput } from 'src/common/dto/output.dto';
 
 @InputType()
 export class DeleteContentInput {
-    @Field(type => Number)
-    contentId: number;
+	@Field((type) => Number)
+	contentId: number;
 }
 
 @ObjectType()
-export class DeleteContentOutput extends CoreOutput { }
+export class DeleteContentOutput extends CoreOutput {}
