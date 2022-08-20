@@ -33,10 +33,10 @@ export class ContentResolver {
 	constructor(
 		private readonly contentService: ContentService,
 		private readonly commonService: CommonService,
-	) {}
+	) { }
 
 	@ResolveField((type) => String, { nullable: true })
-	async previewImage(@Parent() content: ContentEntity): Promise<String> {
+	async previewImageUrl(@Parent() content: ContentEntity): Promise<String> {
 		return this.contentService.getPreviewImage(content.id);
 	}
 

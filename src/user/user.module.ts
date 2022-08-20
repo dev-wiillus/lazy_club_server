@@ -9,6 +9,7 @@ import { UserController } from './user.controller';
 import { UserResolver } from './user.resolver';
 import { VerificationEntity } from './entities/verification.entity';
 import { SubscriptionEntity } from './entities/subscription.entity';
+import { UploadModule } from '@root/upload/upload.module';
 
 @Module({
 	imports: [
@@ -20,9 +21,10 @@ import { SubscriptionEntity } from './entities/subscription.entity';
 			VerificationEntity,
 			SubscriptionEntity,
 		]),
+		UploadModule,
 	],
 	controllers: [UserController],
 	providers: [UserService, UserResolver],
 	exports: [UserService],
 })
-export class UserModule {}
+export class UserModule { }

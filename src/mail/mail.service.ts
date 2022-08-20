@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CONFIG_OPTIONS } from '../common/common.constants';
 import { EmailVar, MailModuleOptions } from './mail.interfaces';
-import mailgun from 'mailgun-js';
+import * as mailgun from 'mailgun-js';
 
 @Injectable()
 export class MailService {
 	constructor(
 		@Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
-	) {}
+	) { }
 
 	private async sendEmail(
 		subject: string,
@@ -15,6 +15,8 @@ export class MailService {
 		template: string,
 		emailVars: EmailVar[],
 	) {
+		console.log(this.options.apiKey)
+		console.log(this.options.domain)
 		const mg = mailgun({
 			apiKey: this.options.apiKey,
 			domain: this.options.domain,
@@ -29,6 +31,7 @@ export class MailService {
 			Object.assign(data, { [`v:${key}`]: value }),
 		);
 		try {
+			console.log(mg)
 			await mg.messages().send(data, function (error, body) {
 				console.log(body);
 			});

@@ -45,8 +45,8 @@ registerEnumType(ContentStatus, { name: 'ContentStatusType' });
 @Entity('Content')
 export class ContentEntity extends CoreEntity {
 	/* 
-        콘텐츠
-    */
+		콘텐츠
+	*/
 
 	@Field((type) => String, { nullable: true })
 	@Column({ length: 100, nullable: true })
@@ -69,7 +69,7 @@ export class ContentEntity extends CoreEntity {
 	@Field((type) => String, { nullable: true })
 	@Column({ comment: '콘텐츠 내용', nullable: true })
 	@IsOptional()
-	content: string;
+	content?: string;
 
 	@Field((type) => Number)
 	@Column({ comment: '조회 수', default: 0 })
@@ -102,5 +102,5 @@ export class ContentEntity extends CoreEntity {
 	@OneToMany((type) => ContentFileEntity, (contentFiles) => contentFiles.id, {
 		nullable: true,
 	})
-	contentFiles: ContentFileEntity[];
+	contentFiles?: ContentFileEntity[];
 }

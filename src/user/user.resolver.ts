@@ -20,7 +20,7 @@ import { UserService } from './user.service';
 
 @Resolver((of) => UserEntity)
 export class UserResolver {
-	constructor(private readonly userService: UserService) {}
+	constructor(private readonly userService: UserService) { }
 
 	@ResolveField((type) => Boolean)
 	hasChannel(@Parent() user: UserEntity): Promise<boolean> {
@@ -38,7 +38,7 @@ export class UserResolver {
 	}
 
 	@Mutation((returns) => RegisterOutput)
-	register(
+	registerUser(
 		@Args('input') registerInput: RegisterInput,
 	): Promise<RegisterOutput> {
 		return this.userService.register(registerInput);

@@ -8,11 +8,6 @@ import {
 } from 'src/content/entities/content.entity';
 import { UserEntity, UserRole } from 'src/user/entities/user.entity';
 import {
-  Connection,
-  DataSource,
-  getConnection,
-  In,
-  Not,
   Repository,
 } from 'typeorm';
 import {
@@ -240,7 +235,6 @@ export class ChannelService {
             file: userProfile,
           });
         if (userProfileUploadResult.ok) {
-          console.log(userProfileUploadResult);
           writer.profile = userProfileUploadResult.filePath;
           await this.userRepository.save(writer);
         } else {

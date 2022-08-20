@@ -11,6 +11,7 @@ import { VerificationEntity } from './entities/verification.entity';
 import { UserProfileOutput } from './dto/user-profile.dto';
 import { VerifyEmailOutput } from './dto/verity-email.dto';
 import { MailService } from 'src/mail/mail.service';
+import { UploadService } from '@root/upload/upload.service';
 
 @Injectable()
 export class UserService {
@@ -21,7 +22,8 @@ export class UserService {
 		private readonly verificationRepository: Repository<VerificationEntity>,
 		private readonly jwtService: JwtService,
 		private readonly mailService: MailService,
-	) {}
+		private readonly uploadService: UploadService,
+	) { }
 
 	async findAll(): Promise<UserEntity[]> {
 		return this.userRepository.find();
@@ -127,19 +129,33 @@ export class UserService {
 
 	async editProfile(
 		userId: number,
-		{ email, password }: EditProfileInput,
+		{ nickname, profile, password }: EditProfileInput,
 	): Promise<EditProfileOutput> {
 		try {
 			const user = await this.userRepository.findOne({ where: { id: userId } });
-			if (email) {
-				user.email = email;
-				user.verified = false;
-				const verification = await this.verificationRepository.save(
-					this.verificationRepository.create({ user }),
-				);
-				this.mailService.sendVerificationEmail(user.email, verification.code);
-			}
+			// if (email) {
+			// 	user.email = email;
+			// 	user.verified = false;
+			// 	const verification = await this.verificationRepository.save(
+			// 		this.verificationRepository.create({ user }),
+			// 	);
+			// 	this.mailService.sendVerificationEmail(user.email, verification.code);
+			// }
+
+			if (nickname) user.nickname = nickname;
 			if (password) user.password = password;
+			if (profile) {
+				const userProfileUploadResult =
+					await this.uploadService.userProfileUploadFile({
+						user,
+						file: profile,
+					});
+				if (userProfileUploadResult.ok) {
+					user.profile = userProfileUploadResult.filePath;
+				} else {
+					return userProfileUploadResult;
+				}
+			}
 			await this.userRepository.save(user);
 			return {
 				ok: true,

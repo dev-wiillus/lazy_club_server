@@ -33,7 +33,7 @@ export class ContentService {
 		private readonly channelRepository: Repository<ChannelEntity>,
 		private readonly uploadService: UploadService,
 		private readonly commonService: CommonService,
-	) {}
+	) { }
 
 	async findAllContent({
 		channelId,
@@ -93,18 +93,27 @@ export class ContentService {
 				},
 			});
 			let previewImage;
-			const contentHtml = await this.commonService.loadHtmlFile({
-				path: content,
-			});
-			if (contentFiles)
+			let contentHtml;
+			if (content) {
+				contentHtml = await this.commonService.loadHtmlFile({
+					path: content,
+				});
+			}
+			if (contentFiles && contentFiles.length > 0) {
 				previewImage = await this.commonService.loadImageFile({
 					path: contentFiles[0].file,
 				});
+			}
+			console.log('------------------')
+			console.log(contentFiles)
 			return {
 				ok: true,
 				results: {
 					...results,
-					content: contentHtml.result,
+					...(contentHtml && contentHtml?.result && { content: contentHtml.result }),
+					...(previewImage && { previewImage: previewImage.result }),
+					...(contentFiles && { previewImageUrl: contentFiles[0].file }),
+
 				},
 			};
 		} catch (error) {
@@ -119,7 +128,9 @@ export class ContentService {
 		const previewImage = await this.contentFileRepository.findOne({
 			where: { content: { id: contentId }, isPreview: true },
 		});
-		return previewImage.file;
+		if (previewImage)
+			return previewImage.file;
+		return
 	}
 
 	// TODO: html 본문 파일로 저장, 불러오기
@@ -163,6 +174,7 @@ export class ContentService {
 		editContentInput: EditContentInput,
 	): Promise<EditContentOutput> {
 		try {
+			console.log('----------------------')
 			const content = await this.contentRepository.findOne({
 				where: { id: editContentInput.id },
 				relations: {
@@ -183,6 +195,7 @@ export class ContentService {
 				};
 			}
 
+			console.log('----------------------0')
 			content.title = editContentInput.title;
 			content.status = editContentInput.status;
 
@@ -197,26 +210,28 @@ export class ContentService {
 					return contentResult;
 				}
 			}
+			console.log('----------------------1')
 			if (editContentInput.previewImage) {
 				const previewContentFile = await this.contentFileRepository.findOne({
 					where: { content: { id: editContentInput.id }, isPreview: true },
 				});
 				const uploadResult = previewContentFile
 					? await this.uploadService.editContentFile({
-							id: previewContentFile.id,
-							file: editContentInput.previewImage,
-					  })
+						id: previewContentFile.id,
+						file: editContentInput.previewImage,
+					})
 					: await this.uploadService.createContentFile({
-							contentId: content.id,
-							file: editContentInput.previewImage,
-							isPreview: true,
-					  });
+						contentId: content.id,
+						file: editContentInput.previewImage,
+						isPreview: true,
+					});
 				if (uploadResult.ok) {
 					// content.contentFiles = [uploadResult.result] TODO: 에러 이유 찾기
 				} else {
 					return uploadResult;
 				}
 			}
+			console.log('----------------------2')
 			await this.contentRepository.save(content);
 			const { content: contentPath, ...results } =
 				await this.contentRepository.findOne({
@@ -225,6 +240,7 @@ export class ContentService {
 			const contentHtml = await this.commonService.loadHtmlFile({
 				path: contentPath,
 			});
+			console.log('----------------------3')
 			return {
 				ok: true,
 				results: {

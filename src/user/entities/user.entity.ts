@@ -47,8 +47,8 @@ registerEnumType(UserRole, { name: 'UserRoleType' });
 @Entity('User')
 export class UserEntity extends CoreEntity {
 	/* 
-        유저
-    */
+		유저
+	*/
 
 	@Field((type) => String)
 	@Column({ length: 200 })
@@ -118,6 +118,12 @@ export class UserEntity extends CoreEntity {
 	@IsString()
 	@IsOptional()
 	profile?: string;
+
+	@Field((type) => String, { nullable: true })
+	@Column({ comment: '한줄 소개', nullable: true })
+	@IsString()
+	@IsOptional()
+	description?: string;
 
 	@Field((type) => [SNSInfoEntity])
 	@OneToMany((type) => SNSInfoEntity, (sns) => sns.user, { nullable: true })
