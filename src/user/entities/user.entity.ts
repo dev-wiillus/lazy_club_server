@@ -50,15 +50,15 @@ export class UserEntity extends CoreEntity {
 		유저
 	*/
 
-	@Field((type) => String)
+	@Field((type) => String, { nullable: true })
 	@Column({ length: 200, nullable: true })
 	@IsString()
-	name: string;
+	name?: string;
 
-	@Field((type) => String)
+	@Field((type) => String, { nullable: true })
 	@Column({ length: 20, nullable: true })
 	@IsString()
-	phone: string;
+	phone?: string;
 
 	@Field((type) => String)
 	@Column({ length: 200, unique: true })
@@ -70,10 +70,10 @@ export class UserEntity extends CoreEntity {
 	@IsString()
 	password: string;
 
-	@Field((type) => String)
+	@Field((type) => String, { nullable: true })
 	@Column({ length: 200, nullable: true })
 	@IsString()
-	nickname: string;
+	nickname?: string;
 
 	@Field((type) => UserStatus, { defaultValue: UserStatus.PENDING })
 	@Column({

@@ -23,7 +23,8 @@ export class UserResolver {
 
 	@ResolveField((type) => Boolean)
 	hasChannel(@Parent() user: UserEntity): Promise<boolean> {
-		return this.userService.checkOwnChannel(user.id);
+		if (user && user.id)
+			return this.userService.checkOwnChannel(user.id);
 	}
 
 	@Query((returns) => [UserEntity])
