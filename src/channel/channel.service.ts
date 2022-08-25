@@ -25,7 +25,7 @@ import {
   FindAllChannelOutput,
 } from './dto/find-all-channel.dto';
 import { FindChannelInput, FindChannelOutput } from './dto/find-channel.dto';
-import { OpenAlertInput, OpenAlertOutput } from './dto/open-alert.dto';
+import { RegisterOpenAlertInput, RegisterOpenAlertOutput } from './dto/open-alert.dto';
 import {
   FindChannelTagOutput,
   FindTagByChannelIdInput,
@@ -67,24 +67,39 @@ export class ChannelService {
     page,
   }: FindAllChannelInput): Promise<FindAllChannelOutput> {
     try {
-      const [results, totalResults] = await this.channelRepository.findAndCount(
-        {
-          take: 25,
-          skip: (page - 1) * 25,
-          relations: {
-            categories: {
-              tag: true,
-            },
-            operators: {
-              user: true,
+      const results = await this.channelRepository
+        .find(
+          {
+            // ...(page === 1 && {
+            //   take: 20,
+            //   skip: (page - 1) * 20,
+            // }),
+            relations: {
+              categories: {
+                tag: true,
+              },
+              operators: {
+                user: true,
+              },
+              openAlerts: true
             },
           },
-        },
-      );
+        ).then(channels => channels.sort((a, b) => {
+          const countA = a.openAlerts?.length ?? 0
+          const countB = b.openAlerts?.length ?? 0
+          if (countA < countB) return 1;
+          if (countA > countB) return -1;
+          return 0
+        }));
+      let totalResults = results.length
+      if (page === 1 && totalResults > 20) {
+        results.slice(0, 19)
+        totalResults = results.length
+      }
       return {
         ok: true,
         results,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 20),
         totalResults,
       };
     } catch (error) {
@@ -455,8 +470,8 @@ export class ChannelService {
 
   async openAlert(
     writer: UserEntity,
-    openAlertInput: OpenAlertInput,
-  ): Promise<OpenAlertOutput> {
+    openAlertInput: RegisterOpenAlertInput,
+  ): Promise<RegisterOpenAlertOutput> {
     try {
       const openAlert = this.openAlertRepository.create({
         ...openAlertInput,

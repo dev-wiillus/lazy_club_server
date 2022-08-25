@@ -51,7 +51,7 @@ export class UserEntity extends CoreEntity {
 	*/
 
 	@Field((type) => String)
-	@Column({ length: 200 })
+	@Column({ length: 200, nullable: true })
 	@IsString()
 	name: string;
 
@@ -71,7 +71,7 @@ export class UserEntity extends CoreEntity {
 	password: string;
 
 	@Field((type) => String)
-	@Column({ length: 200 })
+	@Column({ length: 200, nullable: true })
 	@IsString()
 	nickname: string;
 

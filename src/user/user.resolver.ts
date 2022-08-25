@@ -1,4 +1,3 @@
-import { UseGuards } from '@nestjs/common';
 import {
 	Args,
 	Mutation,

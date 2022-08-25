@@ -29,8 +29,8 @@ import {
 import { FindChannelInput, FindChannelOutput } from './dto/find-channel.dto';
 import {
 	CheckOpenAlertInput,
-	OpenAlertInput,
-	OpenAlertOutput,
+	RegisterOpenAlertInput,
+	RegisterOpenAlertOutput,
 } from './dto/open-alert.dto';
 import {
 	FindChannelTagOutput,
@@ -128,12 +128,12 @@ export class ChannelResolver {
 		return this.channelService.findTagByChannelId(findTagByChannelIdInput);
 	}
 
-	@Mutation((returns) => OpenAlertOutput)
+	@Mutation((returns) => RegisterOpenAlertOutput)
 	@Role(['User', 'Creator'])
 	async openAlert(
 		@AuthUser() authUser: UserEntity,
-		@Args('input') openAlertInput: OpenAlertInput,
-	): Promise<OpenAlertOutput> {
+		@Args('input') openAlertInput: RegisterOpenAlertInput,
+	): Promise<RegisterOpenAlertOutput> {
 		return this.channelService.openAlert(authUser, openAlertInput);
 	}
 }

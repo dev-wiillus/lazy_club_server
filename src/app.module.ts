@@ -80,7 +80,7 @@ import { CommonModule } from './common/common.module';
 		AuthLocalModule,
 		UploadModule,
 		CommonModule,
-		// AuthModule
+		AuthModule
 	],
 	controllers: [],
 	providers: [],

@@ -47,6 +47,8 @@ export class UserService {
 	}
 
 	async checkOwnChannel(userId: UserEntity['id']): Promise<boolean> {
+		console.log('---------------------------')
+		console.log(userId)
 		return Boolean(
 			await this.userRepository.findOne({
 				where: {
@@ -129,7 +131,7 @@ export class UserService {
 
 	async editProfile(
 		userId: number,
-		{ nickname, profile, password }: EditProfileInput,
+		{ nickname, profile, password, name }: EditProfileInput,
 	): Promise<EditProfileOutput> {
 		try {
 			const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -142,8 +144,18 @@ export class UserService {
 			// 	this.mailService.sendVerificationEmail(user.email, verification.code);
 			// }
 
-			if (nickname) user.nickname = nickname;
+			if (name) user.name = name;
 			if (password) user.password = password;
+			if (nickname) {
+				const duplicatedUser = await this.userRepository.findOne({ where: { nickname } });
+				if (duplicatedUser && duplicatedUser.id !== userId) {
+					return {
+						ok: false,
+						error: '닉네임이 중복되었습니다.',
+					};
+				}
+				user.nickname = nickname;
+			}
 			if (profile) {
 				const userProfileUploadResult =
 					await this.uploadService.userProfileUploadFile({
@@ -156,9 +168,10 @@ export class UserService {
 					return userProfileUploadResult;
 				}
 			}
-			await this.userRepository.save(user);
+			const result = await this.userRepository.save(user);
 			return {
 				ok: true,
+				result
 			};
 		} catch (error) {
 			return {

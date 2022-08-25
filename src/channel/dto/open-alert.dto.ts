@@ -3,10 +3,10 @@ import { CoreOutput } from 'src/common/dto/output.dto';
 import { OpenAlertEntity } from '../entities/open_alert.entity';
 
 @ObjectType()
-export class OpenAlertOutput extends CoreOutput {}
+export class RegisterOpenAlertOutput extends CoreOutput { }
 
 @InputType()
-export class OpenAlertInput extends PickType(
+export class RegisterOpenAlertInput extends PickType(
 	OpenAlertEntity,
 	['name', 'phone'],
 	InputType,

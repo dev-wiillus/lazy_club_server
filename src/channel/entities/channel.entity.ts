@@ -4,7 +4,7 @@ import {
 	ObjectType,
 	registerEnumType,
 } from '@nestjs/graphql';
-import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import {
 	IsBoolean,
 	IsEnum,
@@ -17,6 +17,7 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { ChannelOperatorEntity } from './channel_operator.entity';
 import { ContentEntity } from 'src/content/entities/content.entity';
 import { ChannelCategoryEntity } from './channel_category.entity';
+import { OpenAlertEntity } from './open_alert.entity';
 
 export enum ChannelStatus {
 	STOPPING = 'stopping', // 운영 x
@@ -31,8 +32,8 @@ registerEnumType(ChannelStatus, { name: 'ChannelStatusType' });
 @Entity('Channel')
 export class ChannelEntity extends CoreEntity {
 	/* 
-        채널
-    */
+		채널
+	*/
 
 	@Field((type) => Number, { nullable: true })
 	@Column({ nullable: true })
@@ -122,4 +123,10 @@ export class ChannelEntity extends CoreEntity {
 	@Column({ nullable: true, comment: '개인정보처리방침 동의' })
 	@IsBoolean()
 	agreements: boolean;
+
+	@Field((type) => [OpenAlertEntity], { nullable: true })
+	@OneToMany((type) => OpenAlertEntity, (openAlerts) => openAlerts.channel, {
+		nullable: true,
+	})
+	openAlerts?: OpenAlertEntity[];
 }

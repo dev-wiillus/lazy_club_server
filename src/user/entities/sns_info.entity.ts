@@ -1,5 +1,5 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsDate, IsString } from 'class-validator';
+import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { IsDate, IsEnum, IsString } from 'class-validator';
 import {
 	Column,
 	CreateDateColumn,
@@ -9,13 +9,21 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 
+export enum SNSCategory {
+	KAKAO = 'kakao',
+	NAVER = 'naver',
+	GOOGLE = 'google'
+}
+
+registerEnumType(SNSCategory, { name: 'SNSCategory' })
+
 @InputType('SNSInfoInput')
 @ObjectType('SNSInfoOutput')
 @Entity('SNSInfo')
 export class SNSInfoEntity {
 	/*
-        유저 SNS 연동 정보
-    */
+		유저 SNS 연동 정보
+	*/
 	@Field((type) => Number)
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -23,22 +31,26 @@ export class SNSInfoEntity {
 	@Field((type) => String)
 	@Column({ length: 45, comment: 'SNS ID' })
 	@IsString()
-	snsId: String;
+	snsId: string;
 
-	@Field((type) => String)
-	@Column({ length: 45, comment: 'SNS 종류' })
-	@IsString()
-	snsType: String;
+	@Field((type) => SNSCategory)
+	@Column({
+		comment: 'SNS 종류',
+		type: 'enum',
+		enum: SNSCategory,
+	})
+	@IsEnum(SNSCategory)
+	snsCategory: string;
 
 	@Field((type) => String)
 	@Column({ length: 45, comment: 'SNS 이름' })
 	@IsString()
-	snsName: String;
+	snsName: string;
 
 	@Field((type) => String)
-	@Column({ length: 45, comment: 'SNS 프로필' })
+	@Column({ length: 200, comment: 'SNS 프로필' })
 	@IsString()
-	snsProfile: String;
+	snsProfile: string;
 
 	@Field((type) => Date)
 	@CreateDateColumn({ comment: 'SNS 연동 날짜' })
