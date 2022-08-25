@@ -192,7 +192,6 @@ export class ChannelService {
     {
       tagId,
       thumbnail,
-      userProfile,
       ...createChannelInput
     }: CreateChannelInput,
     inviteChannelOperatorInput: InviteChannelOperatorInput,
@@ -236,24 +235,9 @@ export class ChannelService {
             file: thumbnail,
           });
         if (thumbnailUploadResult.ok) {
-          console.log(thumbnailUploadResult);
           channel.thumbnail = thumbnailUploadResult.filePath;
         } else {
           return thumbnailUploadResult;
-        }
-      }
-
-      if (userProfile) {
-        const userProfileUploadResult =
-          await this.uploadService.userProfileUploadFile({
-            user: writer,
-            file: userProfile,
-          });
-        if (userProfileUploadResult.ok) {
-          writer.profile = userProfileUploadResult.filePath;
-          await this.userRepository.save(writer);
-        } else {
-          return userProfileUploadResult;
         }
       }
 
@@ -285,16 +269,17 @@ export class ChannelService {
         result,
       };
     } catch (error) {
+      const message = error.code === 'ER_DUP_ENTRY' ? '채널명이 중복되었습니다.' : '채널을 생성할 수 없습니다.'
       return {
         ok: false,
-        error,
+        error: message,
       };
     }
   }
 
   async editChannel(
     writer: UserEntity,
-    { channelId, tagId, ...editChannelInput }: EditChannelInput,
+    { channelId, title, description, thumbnail }: EditChannelInput,
   ): Promise<EditChannelOutput> {
     try {
       const channel = await this.channelRepository.findOne({
@@ -314,16 +299,16 @@ export class ChannelService {
       //         error: "채널 수정 권한이 없습니다."
       //     }
       // }
-      let category;
-      const categoryResult = await this.mutateChannelCategory({
-        channelId,
-        tagId,
-      });
-      if (categoryResult.ok) {
-        category = categoryResult.results;
-      } else {
-        return categoryResult;
-      }
+      // let category;
+      // const categoryResult = await this.mutateChannelCategory({
+      //   channelId,
+      //   tagId,
+      // });
+      // if (categoryResult.ok) {
+      //   category = categoryResult.results;
+      // } else {
+      //   return categoryResult;
+      // }
 
       // TODO: 카테고리 끼워넣기
       // await this.channelRepository.save({
@@ -331,14 +316,35 @@ export class ChannelService {
       //   ...editChannelInput,
       //   ...(category && { category })
       // })
+
+      if (title) { channel.title = title }
+      if (description) { channel.description = description }
+      if (thumbnail) {
+        const thumbnailUploadResult =
+          await this.uploadService.channelProfileUploadFile({
+            channel,
+            file: thumbnail,
+          });
+        if (thumbnailUploadResult.ok) {
+          channel.thumbnail = thumbnailUploadResult.filePath;
+        } else {
+          return thumbnailUploadResult;
+        }
+      }
+
+      await this.channelRepository.save(channel);
+      const result = await this.channelRepository.findOne({
+        where: { id: channel.id },
+      })
       return {
         ok: true,
+        result
       };
     } catch (error) {
-      console.log(error);
+      const message = error.code === 'ER_DUP_ENTRY' ? '채널명이 중복되었습니다.' : '채널을 수정할 수 없습니다.'
       return {
         ok: false,
-        error: '채널을 수정할 수 없습니다.',
+        error: message,
       };
     }
   }

@@ -24,9 +24,6 @@ export class CreateChannelInput extends PickType(
 
 	@Field((type) => GraphQLUpload, { nullable: true })
 	thumbnail?: FileUpload;
-
-	@Field((type) => GraphQLUpload, { nullable: true })
-	userProfile?: FileUpload;
 }
 
 @ObjectType()
@@ -47,7 +44,7 @@ export class CreateChannelOperatorInput extends PickType(
 	ChannelOperatorEntity,
 	['userId', 'channelId', 'returnAccount', 'businessRegistrationNumber'],
 	InputType,
-) {}
+) { }
 
 @ObjectType()
-export class CreateChannelOperatorOutput extends CoreOutput {}
+export class CreateChannelOperatorOutput extends CoreOutput { }

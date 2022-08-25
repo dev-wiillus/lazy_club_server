@@ -112,7 +112,7 @@ export class ContentService {
 					...results,
 					...(contentHtml && contentHtml?.result && { content: contentHtml.result }),
 					...(previewImage && { previewImage: previewImage.result }),
-					...(contentFiles && { previewImageUrl: contentFiles[0].file }),
+					...(contentFiles && contentFiles[0] && { previewImageUrl: contentFiles[0].file }),
 
 				},
 			};

@@ -95,7 +95,7 @@ export class ContentEntity extends CoreEntity {
 	writerId: number;
 
 	@Field((type) => ChannelEntity)
-	@ManyToOne((type) => ChannelEntity, (channel) => channel.id)
+	@ManyToOne((type) => ChannelEntity, (channel) => channel.id, { onDelete: 'CASCADE' })
 	channel: ChannelEntity;
 
 	@Field((type) => [ContentFileEntity], { nullable: true })

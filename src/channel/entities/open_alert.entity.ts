@@ -18,8 +18,8 @@ import { ChannelEntity } from './channel.entity';
 @Unique('id', ['userId', 'channelId'])
 export class OpenAlertEntity extends CreatedAtEntity {
 	/* 
-        오픈 알림 신청 [임시]
-    */
+		오픈 알림 신청 [임시]
+	*/
 
 	@PrimaryColumn()
 	userId: number;
@@ -33,7 +33,7 @@ export class OpenAlertEntity extends CreatedAtEntity {
 	user: UserEntity;
 
 	@Field((type) => ChannelEntity)
-	@ManyToOne((type) => ChannelEntity, (channel) => channel.id)
+	@ManyToOne((type) => ChannelEntity, (channel) => channel.id, { onDelete: 'CASCADE' })
 	@JoinColumn({ name: 'channelId' })
 	channel: ChannelEntity;
 
