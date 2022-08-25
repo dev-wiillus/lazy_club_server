@@ -53,11 +53,13 @@ export class UserEntity extends CoreEntity {
 	@Field((type) => String, { nullable: true })
 	@Column({ length: 200, nullable: true })
 	@IsString()
+	@IsOptional()
 	name?: string;
 
 	@Field((type) => String, { nullable: true })
 	@Column({ length: 20, nullable: true })
 	@IsString()
+	@IsOptional()
 	phone?: string;
 
 	@Field((type) => String)
@@ -73,6 +75,7 @@ export class UserEntity extends CoreEntity {
 	@Field((type) => String, { nullable: true })
 	@Column({ length: 200, nullable: true })
 	@IsString()
+	@IsOptional()
 	nickname?: string;
 
 	@Field((type) => UserStatus, { defaultValue: UserStatus.PENDING })
