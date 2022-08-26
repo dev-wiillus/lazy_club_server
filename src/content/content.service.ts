@@ -104,8 +104,6 @@ export class ContentService {
 					path: contentFiles[0].file,
 				});
 			}
-			console.log('------------------')
-			console.log(contentFiles)
 			return {
 				ok: true,
 				results: {
@@ -133,7 +131,6 @@ export class ContentService {
 		return
 	}
 
-	// TODO: html 본문 파일로 저장, 불러오기
 	// 새로작성 페이지로 이동시 무조건 생성
 	async createContent(
 		writer: UserEntity,
