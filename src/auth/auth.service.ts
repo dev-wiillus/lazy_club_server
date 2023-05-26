@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -7,28 +7,46 @@ import passport from 'passport';
 import { KakaoInput, KakaoOutput } from './dto/kakao.dto';
 import { SNSCategory, SNSInfoEntity } from '@root/user/entities/sns_info.entity';
 import { CommonService } from '@root/common/common.service';
+import { JwtService } from '@root/jwt/jwt.service';
+import { JwtModuleOptions } from '@nestjs/jwt';
+import { CONFIG_OPTIONS } from '@root/common/common.constants';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
 	constructor(
+		// @Inject(CONFIG_OPTIONS)
+		// private readonly options: JwtModuleOptions,
 		@InjectRepository(UserEntity)
 		private readonly userRepository: Repository<UserEntity>,
 		@InjectRepository(SNSInfoEntity)
 		private readonly snsInfoRepository: Repository<SNSInfoEntity>,
 		private readonly commonService: CommonService,
+		private readonly jwtService: JwtService,
 	) { }
+	// signAccessToken(
+	// 	userId: number,
+	// ): string {
+	// 	return jwt.sign({ id: userId }, this.options.accessTokenPrivateKey, {
+	// 		expiresIn: '1h',
+	// 	});
+	// }
 
-	async login(
-		params: Pick<UserEntity, 'email' | 'password'>,
-	): Promise<UserEntity> {
-		/* SNS 로그인 */
-		return;
-	}
+	// signRefreshToken(
+	// 	userId: number,
+	// ): string {
+	// 	return jwt.sign({ id: userId }, this.options.refreshTokenPrivateKey, {
+	// 		expiresIn: '24h',
+	// 	});
+	// }
 
-	async logout(): Promise<{ ok: boolean }> {
-		/* SNS 로그아웃 */
-		return;
-	}
+	// verifyAccessToken(token: string) {
+	// 	return jwt.verify(token, this.options.accessTokenPrivateKey);
+	// }
+
+	// verifyRefreshToken(token: string) {
+	// 	return jwt.verify(token, this.options.refreshTokenPrivateKey);
+	// }
 
 	async kakao({ name, kakaoId, email, nickname, profile }: KakaoInput): Promise<KakaoOutput> {
 		/* 카카오 인증 */
@@ -41,8 +59,10 @@ export class AuthService {
 			}
 		})
 		if (user) {
+			const token = this.jwtService.sign({ id: user.id });
 			return {
-				ok: true
+				ok: true,
+				token
 			}
 		} else {
 			try {
@@ -65,7 +85,12 @@ export class AuthService {
 					user: newUser
 				})
 				await this.snsInfoRepository.save(newSNS)
-				return { ok: true }
+
+				const token = this.jwtService.sign({ id: newUser.id });
+				return {
+					ok: true,
+					token
+				}
 			} catch (error) {
 				return {
 					ok: false,

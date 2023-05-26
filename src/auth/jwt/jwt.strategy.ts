@@ -11,8 +11,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             //true로 설정하면 Passport에 토큰 검증을 위임하지 않고 직접 검증, false는 Passport에 검증 위임
             ignoreExpiration: false,
-            //검증 비밀 값(유출 주위)
+            //검증 비밀 값(유출 주의)
             secretOrKey: jwtConstants.secret,
+            // secretOrKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
         });
     }
 

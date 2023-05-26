@@ -1,3 +1,4 @@
+import { Field } from "@nestjs/graphql";
 import { CoreOutput } from "@root/common/dto/output.dto";
 
 
@@ -13,4 +14,7 @@ export class KakaoInput {
     profile?: string;
 }
 
-export class KakaoOutput extends CoreOutput { }
+export class KakaoOutput extends CoreOutput {
+    @Field((type) => String, { nullable: true })
+    token?: string;
+}
