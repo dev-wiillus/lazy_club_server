@@ -170,3 +170,6 @@ dist
 static/channel/**/*
 static/file/**/*
 static/user/**/*
+
+# bakcup files
+*.bak
